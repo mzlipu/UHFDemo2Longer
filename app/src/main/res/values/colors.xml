@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+
+    <color name="gre">#607D8B</color>
+    <color name="blu">#03A9E4</color>
+    <color name="gre2">#4C9F50</color>
+    <color name="bg">#9E9E9E</color>
+    <color name="br">#000000</color>
+    <color name="wr">#FFFFFF</color>
+    <color name="mycolor1">#996633</color>
+    <color name="allbg">#EEEEEE</color>
+    <color name="background1">#0080ff</color>
+    <color name="background2">#3399ff</color>
+        <color name="light_red">#ff6666</color>
+
+    <color name="inventory_btn_solid_red">#FC2C30</color>
+    <color name="inventory_btn_solid_white">#EEEEEE</color>
+    <color name="inventory_btn_stroke_red">#EC6149</color>
+</resources>

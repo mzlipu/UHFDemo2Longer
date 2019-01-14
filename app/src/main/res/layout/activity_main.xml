@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/wr"
+    tools:context="com.uhfdemo2longer.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background1"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/title"
+            android:text="@string/inventory_epc"
+            android:background="@color/background1"
+            android:textColor="@color/wr"
+            android:textSize="26dp"
+            android:gravity="center"
+            android:layout_alignParentTop="true">
+        </TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background2"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/wr"
+            android:textSize="20dp"
+            android:text="@string/all_epc_sum" />
+
+        <TextView
+            android:id="@+id/textView_tag"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/wr"
+            android:textSize="20dp"
+            android:text="@string/all_epc_count" />
+
+        <TextView
+            android:id="@+id/textView_tag_count"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background2"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:textColor="@color/wr"
+            android:text="@string/sn" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="@color/wr"
+            android:text="@string/epc_number" />
+
+        <TextView
+            android:id="@+id/textView_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:ems="5"
+            android:textColor="@color/wr"
+            android:text="@string/status" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listView_epc"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:onClick="ShowPopup"
+            android:id="@+id/button_settings"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inventory_btn_bg"
+            android:minWidth="150dp"
+            android:layout_alignParentLeft="true"
+            android:text="@string/settings"
+            android:textColor="@color/wr" />
+
+        <Button
+            android:id="@+id/button_export_excel"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inventory_btn_bg"
+            android:minWidth="150dp"
+            android:layout_alignParentRight="true"
+            android:text="@string/export_excel"
+            android:textColor="@color/wr" />
+    </RelativeLayout >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <Button
+            android:id="@+id/button_start"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/inventory_btn_bg"
+            android:text="@string/start_inventory_epc"
+            android:textColor="@color/wr" />
+
+        <Button
+            android:id="@+id/button_clear_epc"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inventory_btn_bg"
+            android:minWidth="150dp"
+            android:text="@string/clear"
+            android:textColor="@color/wr"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <Button
+            android:id="@+id/button_asset_audit"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/inventory_btn_bg"
+            android:text="@string/asset_audit"
+            android:textColor="@color/wr" />
+
+    </LinearLayout>
+
+</android.widget.LinearLayout>

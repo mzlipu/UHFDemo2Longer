@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_import"
+        android:title="导入"></item>
+    <item
+        android:id="@+id/menu_clear"
+        android:title="清空" />
+    <item
+        android:id="@+id/menu_about"
+        android:title="关于"></item>
+    <item
+        android:id="@+id/menu_test"
+        android:title="测试"></item>
+</menu>
