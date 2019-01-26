@@ -57,7 +57,7 @@ public class PgConnection extends AsyncTask<Void, Void, Void> {
             System.out.println("con not found");
         }
         else {
-            final String sqlAsset = "select bt_asset.id as id, bt_asset.name as name, bt_asset.rfid_tags as rfid_tags, bt_asset_location.name as loc_name \n" +
+            final String sqlAsset = "select bt_asset.id as id, bt_asset.name as name, bt_asset.rfid_tags as rfid_tags, bt_asset.current_loc_id as loc_id, bt_asset_location.name as loc_name \n" +
                     "from bt_asset\n" +
                     "LEFT JOIN bt_asset_location\n" +
                     "ON bt_asset.current_loc_id = bt_asset_location.id";
@@ -75,6 +75,7 @@ public class PgConnection extends AsyncTask<Void, Void, Void> {
                     asset.setAssetName(rs.getString("name"));
                     asset.setRfidTags(rs.getString("rfid_tags"));
                     asset.setLocation(rs.getString("loc_name"));
+                    asset.setLocationId(rs.getString("loc_id"));
                     assets.add(asset);
                 }
             } catch (final SQLException e) {
@@ -165,6 +166,17 @@ public class PgConnection extends AsyncTask<Void, Void, Void> {
         if (conn!=null){
             SaveAssetAudit saveAssetAudit = new SaveAssetAudit(conn, listEpc, currentLocationSpinner);
             saveAssetAudit.execute();
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public Boolean SaveAsssetMove(List<EpcDataModel> listEpc, Location currentLocationSpinner){
+        if (conn!=null){
+            SaveAssetMove saveAssetMove = new SaveAssetMove(conn, listEpc, currentLocationSpinner);
+            saveAssetMove.execute();
             return true;
         }
         else{

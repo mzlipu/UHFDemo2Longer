@@ -48,7 +48,9 @@ public class EPCadapter extends BaseAdapter {
                 holder = new ViewHolder();
                 if(context instanceof AssetAudit) {
                     convertView = LayoutInflater.from(context).inflate(R.layout.item_epc_asset_audit, null);
-                }else{
+                } else if(context instanceof AssetMove){
+                    convertView = LayoutInflater.from(context).inflate(R.layout.item_epc_asset_move, null);
+                } else{
                     convertView = LayoutInflater.from(context).inflate(R.layout.item_epc, null);
                 }
                 holder.tvEpc = (TextView) convertView.findViewById(R.id.textView_epc);

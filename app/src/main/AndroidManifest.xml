@@ -29,7 +29,8 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".AssetAudit"></activity>
+        <activity android:name=".AssetAudit" />
+        <activity android:name=".AssetMove"></activity>
     </application>
 
 </manifest>

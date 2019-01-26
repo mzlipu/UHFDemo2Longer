@@ -226,6 +226,15 @@
             android:background="@drawable/inventory_btn_bg"
             android:text="@string/inventory_epc"
             android:textColor="@color/wr" />
+        <Button
+            android:id="@+id/button_asset_move"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inventory_btn_bg"
+            android:minWidth="230dp"
+            android:text="@string/asset_move"
+            android:textColor="@color/wr"/>
 
     </LinearLayout>
 

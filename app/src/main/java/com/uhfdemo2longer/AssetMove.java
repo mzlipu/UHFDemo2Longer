@@ -18,7 +18,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,18 +71,17 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 
-public class AssetAudit extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class AssetMove extends Activity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TextView tvTagCount;// tag count text view
     private TextView tvTagSum;// tag sum text view
     private ListView lvEpc;// epc list view
     private Button btnStart;// inventory button
     private Button btnClear;// clear button
-    private Button btnSave;// Save button
-    private Button btnExport;// Export button
+    private Button btnMove;// Save button
     private Button btnSettings;
     private Button btnMainActivity;// Main Activity button
-    private Button btnAssetMove;// change to asset move button
+    private Button btnAssetAudit;// change to asset audit button
     private Spinner spinnerLocation;// Location Spinner
     private static List<Asset> listAsset = null;
     private static List<Asset> listAssetByLocation = null;
@@ -100,13 +98,13 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
     private Toast toast;
     private String root = "";
     private UHFLongerManager manager = null;
-    private AssetAudit.InventoryThread thread = null;
-    private AssetAudit.KeyReceiver keyReceiver = null;
+    private AssetMove.InventoryThread thread = null;
+    private AssetMove.KeyReceiver keyReceiver = null;
     private RunnerDBManager dbHelper;
     private boolean connectFlag = false;
     private boolean runFlag = true;
     private boolean startFlag = false;
-    private static final String TAG = "AssetAudit";
+    private static final String TAG = "AssetMove";
 
     private int allCount = 0;// inventory count
     private Set<String> epcSet = null; // store different EPC
@@ -143,19 +141,19 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
             e.printStackTrace();
         }
 
-        setContentView(R.layout.activity_asset_audit);
+        setContentView(R.layout.activity_asset_move);
         initView();
 
         Util.initSoundPool(this);
 
-        thread = new AssetAudit.InventoryThread();
+        thread = new AssetMove.InventoryThread();
 //        thread.start();
 
         myDialog = new Dialog(this);
 
         root = Environment.getExternalStorageDirectory().getPath();
 
-        keyReceiver = new AssetAudit.KeyReceiver();
+        keyReceiver = new AssetMove.KeyReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.rfid.FUN_KEY");
         this.registerReceiver(keyReceiver, intentFilter);
@@ -215,11 +213,10 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
         btnStart = (Button) findViewById(R.id.button_start);
         tvTagSum = (TextView) findViewById(R.id.textView_tag);
         btnClear = (Button) findViewById(R.id.button_clear_epc);
-        btnSave = (Button) findViewById(R.id.button_save_asset_audit);
-        btnExport = (Button) findViewById(R.id.button_export_excel);
+        btnMove = (Button) findViewById(R.id.button_save_asset_move);
         btnSettings = (Button) findViewById(R.id.button_settings);
         btnMainActivity = (Button) findViewById(R.id.button_main_activity);
-        btnAssetMove = (Button) findViewById(R.id.button_asset_move);
+        btnAssetAudit = (Button) findViewById(R.id.button_asset_audit);
         spinnerLocation = (Spinner) findViewById(R.id.spinnerLocation);
 
         lvEpc.setFocusable(false);
@@ -229,10 +226,9 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
         lvEpc.setOnItemClickListener(null);
         btnStart.setOnClickListener(this);
         btnClear.setOnClickListener(this);
-        btnSave.setOnClickListener(this);
-        btnExport.setOnClickListener(this);
+        btnMove.setOnClickListener(this);
         btnMainActivity.setOnClickListener(this);
-        btnAssetMove.setOnClickListener(this);
+        btnAssetAudit.setOnClickListener(this);
         spinnerLocation.setOnItemSelectedListener(this);
 
         btnStart.setEnabled(false);
@@ -297,7 +293,7 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
 
     private void showtoast(String info) {
 
-        toast = Toast.makeText(AssetAudit.this, info, Toast.LENGTH_SHORT);
+        toast = Toast.makeText(AssetMove.this, info, Toast.LENGTH_SHORT);
         toast.show();
     }
 
@@ -334,11 +330,8 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
             case R.id.button_clear_epc:
                 clearEpc();
                 break;
-            case R.id.button_save_asset_audit:
-                saveAssetAudit();
-                break;
-            case R.id.button_export_excel:
-                createExcelSheet();
+            case R.id.button_save_asset_move:
+                saveAssetMove();
                 break;
             case R.id.button_main_activity:
                 startFlag = false;
@@ -349,10 +342,10 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
                 }
                 unregisterReceiver(keyReceiver);
                 super.onDestroy();
-                Intent intent = new Intent(AssetAudit.this, MainActivity.class);
+                Intent intent = new Intent(AssetMove.this, MainActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.button_asset_move:
+            case R.id.button_asset_audit:
                 startFlag = false;
                 runFlag = false;
                 if (manager != null) {
@@ -361,8 +354,8 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
                 }
                 unregisterReceiver(keyReceiver);
                 super.onDestroy();
-                Intent intentMove = new Intent(AssetAudit.this, AssetMove.class);
-                startActivity(intentMove);
+                Intent intentAudit = new Intent(AssetMove.this, AssetAudit.class);
+                startActivity(intentAudit);
                 break;
             case R.id.set_freq:
                 SharedPreferences shared = getSharedPreferences("settings", 0);
@@ -478,6 +471,7 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
                                     b.putString("btAssetId", String.valueOf(asset1.getAssetID()));
                                     b.putString("currentLocation", currentLocationSpinner.getLocationName());
                                     b.putString("assetName", asset1.getAssetName());
+                                    b.putString("previousLocationId", asset1.getLocationId());
                                     b.putString("previousLocation", asset1.getLocation());
                                     b.putString("status", "Not Matched");
                                     Util.play(1, 0);
@@ -488,6 +482,7 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
                                         }else {
                                             if(epc.equalsIgnoreCase(asset.getRfidTags())){
                                                 b.putString("assetName", asset.getAssetName());
+                                                b.putString("previousLocationId", asset.getLocationId());
                                                 b.putString("previousLocation", asset.getLocation());
                                                 b.putString("status", "Matched");
                                                 break;
@@ -749,21 +744,22 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
     }
 
     private static class MyHandler extends Handler {
-        private WeakReference<AssetAudit> mWeakReference;
+        private WeakReference<AssetMove> mWeakReference;
 
-        public MyHandler(AssetAudit assetAudit) {
-            mWeakReference = new WeakReference<AssetAudit>(assetAudit);
+        public MyHandler(AssetMove assetMove) {
+            mWeakReference = new WeakReference<AssetMove>(assetMove);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            AssetAudit assetAudit = mWeakReference.get();
+            AssetMove assetMove = mWeakReference.get();
             switch (msg.what) {
                 case 1:
                     String epc = msg.getData().getString("epc");
                     String rssi = msg.getData().getString("rssi");
                     String status = msg.getData().getString("status");
                     String assetName = msg.getData().getString("assetName");
+                    String previousLocationId = msg.getData().getString("previousLocationId");
                     String previousLocation = msg.getData().getString("previousLocation");
                     String currentLocation = msg.getData().getString("currentLocation");
                     String btAssetId = msg.getData().getString("btAssetId");
@@ -771,60 +767,63 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
                         break;
                     }
                     int position;
-                    assetAudit.allCount++;
+                    assetMove.allCount++;
 
-                    if (assetAudit.epcSet == null) {// first add
-                        assetAudit.epcSet = new HashSet<String>();
-                        assetAudit.listEpc = new ArrayList<EpcDataModel>();
-                        assetAudit.mapEpc = new HashMap<String, Integer>();
-                        assetAudit.epcSet.add(epc);
-                        assetAudit.mapEpc.put(epc, 0);
+                    if (assetMove.epcSet == null) {// first add
+                        assetMove.epcSet = new HashSet<String>();
+                        assetMove.listEpc = new ArrayList<EpcDataModel>();
+                        assetMove.mapEpc = new HashMap<String, Integer>();
+                        assetMove.epcSet.add(epc);
+                        assetMove.mapEpc.put(epc, 0);
                         EpcDataModel epcTag = new EpcDataModel();
                         epcTag.setepc(epc);
                         epcTag.setrssi(rssi);
                         epcTag.setStatus(status);
                         epcTag.setAssetName(assetName);
+                        epcTag.setPreviousLocationId(previousLocationId);
                         epcTag.setPreviousLocation(previousLocation);
                         epcTag.setCurrentLocation(currentLocation);
                         epcTag.setBtAssetId(Integer.parseInt(btAssetId));
-                        assetAudit.listEpc.add(epcTag);
-                        assetAudit.adapter = new EPCadapter(assetAudit,
-                                assetAudit.listEpc);
-                        assetAudit.lvEpc.setAdapter(assetAudit.adapter);
+                        assetMove.listEpc.add(epcTag);
+                        assetMove.adapter = new EPCadapter(assetMove,
+                                assetMove.listEpc);
+                        assetMove.lvEpc.setAdapter(assetMove.adapter);
 
                     } else {
-                        if (assetAudit.epcSet.contains(epc)) {// set already exit
-                            position = assetAudit.mapEpc.get(epc);
-                            EpcDataModel epcOld = assetAudit.listEpc.get(position);
+                        if (assetMove.epcSet.contains(epc)) {// set already exit
+                            position = assetMove.mapEpc.get(epc);
+                            EpcDataModel epcOld = assetMove.listEpc.get(position);
 //						    epcOld.setCount(epcOld.getCount() + 1);
                             epcOld.setStatus(status);
                             epcOld.setAssetName(assetName);
+                            epcOld.setPreviousLocationId(previousLocationId);
                             epcOld.setPreviousLocation(previousLocation);
                             epcOld.setCurrentLocation(currentLocation);
                             epcOld.setBtAssetId(Integer.parseInt(btAssetId));
                             epcOld.setrssi(rssi);
-                            assetAudit.listEpc.set(position, epcOld);
+                            assetMove.listEpc.set(position, epcOld);
                         } else {
-                            assetAudit.epcSet.add(epc);
-                            assetAudit.mapEpc.put(epc, assetAudit.listEpc.size());
+                            assetMove.epcSet.add(epc);
+                            assetMove.mapEpc.put(epc, assetMove.listEpc.size());
                             EpcDataModel epcTag = new EpcDataModel();
                             epcTag.setepc(epc);
                             epcTag.setrssi(rssi);
                             epcTag.setStatus(status);
                             epcTag.setAssetName(assetName);
+                            epcTag.setPreviousLocationId(previousLocationId);
                             epcTag.setPreviousLocation(previousLocation);
                             epcTag.setCurrentLocation(currentLocation);
                             epcTag.setBtAssetId(Integer.parseInt(btAssetId));
-                            assetAudit.listEpc.add(epcTag);
+                            assetMove.listEpc.add(epcTag);
                         }
 
-                        /*if (System.currentTimeMillis() - assetAudit.lastTime > 100) {
-                            assetAudit.lastTime = System.currentTimeMillis();
+                        /*if (System.currentTimeMillis() - assetMove.lastTime > 100) {
+                            assetMove.lastTime = System.currentTimeMillis();
                             Util.play(1, 0);
                         }*/
-                        assetAudit.tvTagCount.setText("" + assetAudit.allCount);
-                        assetAudit.tvTagSum.setText("" + assetAudit.listEpc.size());
-                        assetAudit.adapter.notifyDataSetChanged();
+                        assetMove.tvTagCount.setText("" + assetMove.allCount);
+                        assetMove.tvTagSum.setText("" + assetMove.listEpc.size());
+                        assetMove.adapter.notifyDataSetChanged();
 
                     }
 
@@ -835,7 +834,7 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
         }
     }
 
-    private Handler dataHandler = new AssetAudit.MyHandler(AssetAudit.this);
+    private Handler dataHandler = new AssetMove.MyHandler(AssetMove.this);
 
     private boolean isRunning = false;
     private boolean isStart = false;
@@ -898,83 +897,6 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private void createExcelSheet()
-    {
-        String Fnamexls="excelSheet"+System.currentTimeMillis()+ ".xls";
-        File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File (sdCard.getAbsolutePath() + "/ExportExcel");
-        directory.mkdirs();
-        File file = new File(directory, Fnamexls);
-
-        WorkbookSettings wbSettings = new WorkbookSettings();
-
-        wbSettings.setLocale(new Locale("en", "EN"));
-
-        WritableWorkbook workbook;
-        try {
-            int a = 1;
-            workbook = Workbook.createWorkbook(file, wbSettings);
-            //workbook.createSheet("Report", 0);
-            if(listEpc==null){
-                showtoast("Please First Start Scanning Epc");
-                return;
-            }
-            WritableSheet sheet = workbook.createSheet("RFID Tags Asset Audit", 0);
-            Label labelOne = new Label(0,0,"ID");
-            Label labelTwo = new Label(1,0,"RFID Tag");
-            Label labelThree = new Label(2,0,"Asset Name");
-            Label labelFour = new Label(3,0,"Previous Location");
-            Label labelFive = new Label(4,0,"Current Location");
-            try {
-                sheet.addCell(labelOne);
-                sheet.addCell(labelTwo);
-                sheet.addCell(labelThree);
-                sheet.addCell(labelFour);
-                sheet.addCell(labelFive);
-            } catch (RowsExceededException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (WriteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-            for (EpcDataModel epcDataModel:listEpc) {
-                Label labelSix = new Label(0,a,String.valueOf(a));
-                Label labelSeven = new Label(1,a,epcDataModel.getepc());
-                Label labelEight = new Label(2,a,epcDataModel.getAssetName());
-                Label labelNine = new Label(3,a,epcDataModel.getPreviousLocation());
-                Label labelTen = new Label(4,a,epcDataModel.getCurrentLocation());
-                try {
-                    sheet.addCell(labelSix);
-                    sheet.addCell(labelSeven);
-                    sheet.addCell(labelEight);
-                    sheet.addCell(labelNine);
-                    sheet.addCell(labelTen);
-                } catch (RowsExceededException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (WriteException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                a++;
-            }
-
-            workbook.write();
-            try {
-                workbook.close();
-            } catch (WriteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            //createExcel(excelSheet);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        showtoast("Export in Excel File Successfully");
     }
 
     public void resume() {
@@ -1096,13 +1018,13 @@ public class AssetAudit extends Activity implements View.OnClickListener, Adapte
         // TODO Auto-generated method stub
     }
 
-    private void saveAssetAudit(){
+    private void saveAssetMove(){
         if(listEpc != null){
-            Boolean aBoolean = pgConnection.SaveAsssetAudit(listEpc, currentLocationSpinner);
+            Boolean aBoolean = pgConnection.SaveAsssetMove(listEpc, currentLocationSpinner);
             if(aBoolean){
-                showtoast("All Assets Audit Data Saved.");
+                showtoast("All Assets are Waiting For Approve Now.");
             }else{
-                showtoast("Data Didn`t Save Properly.");
+                showtoast("Data Didn`t Move Properly.");
             }
         }else{
             showtoast("Please First Start Scanning Epc.");

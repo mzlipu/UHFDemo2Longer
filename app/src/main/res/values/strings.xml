@@ -502,11 +502,13 @@
     <string name="current_location">Current Location</string>
     <string name="status">Status</string>
     <string name="save_asset_audit">Save</string>
+    <string name="save_asset_move">Move</string>
     <string name="export_excel">Export Excel</string>
     <string name="start_inventory_epc">Start Inventory Epc</string>
     <string name="stop_inventory_epc">Stop Inventory Epc</string>
     <string name="inventory_epc">Inventory Epc</string>
     <string name="asset_audit">Asset Audit</string>
+    <string name="asset_move">Asset Move</string>
     <string name="power_dbm">Power(dBm)</string>
     <string name="frequency_band">Frequency Band</string>
     <string name="set_power">Set Power</string>

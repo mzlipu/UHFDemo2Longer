@@ -10,6 +10,7 @@ public class Asset implements Serializable {
     private String assetModle;
     private String assetType;
     private String epc;
+    private String locationId;
     private String location;
     private String createTime;
     private int status;
@@ -17,13 +18,14 @@ public class Asset implements Serializable {
     public Asset() {
     }
 
-    public Asset(int assetID, String assetName, String rfidTags, String assetModle, String assetType, String epc, String location, String createTime, int status) {
+    public Asset(int assetID, String assetName, String rfidTags, String assetModle, String assetType, String epc, String locationId, String location, String createTime, int status) {
         this.assetID = assetID;
         this.assetName = assetName;
         this.rfidTags = rfidTags;
         this.assetModle = assetModle;
         this.assetType = assetType;
         this.epc = epc;
+        this.locationId = locationId;
         this.location = location;
         this.createTime = createTime;
         this.status = status;
@@ -100,6 +102,14 @@ public class Asset implements Serializable {
 
     public void setRfidTags(String rfidTags) {
         this.rfidTags = rfidTags;
+    }
+
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
     }
 
     @Override

@@ -10,6 +10,7 @@ public class EpcDataModel {
 	private String status;
 	private int btAssetId;
 	private String assetName;
+	private String PreviousLocationId;
 	private String PreviousLocation;
 	private String CurrentLocation;
 
@@ -24,13 +25,15 @@ public class EpcDataModel {
 		this.count = count;
 	}
 
-	public EpcDataModel(int id, String rssi, String epc, int count, String status, String assetName, String previousLocation, String currentLocation) {
+	public EpcDataModel(int id, String rssi, String epc, int count, String status, int btAssetId, String assetName, String previousLocationId, String previousLocation, String currentLocation) {
 		this.id = id;
 		this.rssi = rssi;
 		this.epc = epc;
 		this.count = count;
 		this.status = status;
+		this.btAssetId = btAssetId;
 		this.assetName = assetName;
+		PreviousLocationId = previousLocationId;
 		PreviousLocation = previousLocation;
 		CurrentLocation = currentLocation;
 	}
@@ -104,6 +107,14 @@ public class EpcDataModel {
 
 	public void setBtAssetId(int btAssetId) {
 		this.btAssetId = btAssetId;
+	}
+
+	public String getPreviousLocationId() {
+		return PreviousLocationId;
+	}
+
+	public void setPreviousLocationId(String previousLocationId) {
+		PreviousLocationId = previousLocationId;
 	}
 
 	@Override

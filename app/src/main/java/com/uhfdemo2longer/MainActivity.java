@@ -88,6 +88,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
     private Button btnExport;// Export button
     private Button btnSettings;
     private Button btnAssetAudit;// change to asset audit button
+    private Button btnAssetMove;// change to asset move button
     private Dialog myDialog;
     private int currentFreq;
     private int currentFreqPosition = 1;
@@ -202,6 +203,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         btnExport = (Button) findViewById(R.id.button_export_excel);
         btnSettings = (Button) findViewById(R.id.button_settings);
         btnAssetAudit = (Button) findViewById(R.id.button_asset_audit);
+        btnAssetMove = (Button) findViewById(R.id.button_asset_move);
 
         lvEpc.setFocusable(false);
         lvEpc.setClickable(false);
@@ -212,6 +214,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         btnClear.setOnClickListener(this);
         btnExport.setOnClickListener(this);
         btnAssetAudit.setOnClickListener(this);
+        btnAssetMove.setOnClickListener(this);
     }
 
     private class KeyReceiver extends BroadcastReceiver {
@@ -307,6 +310,18 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 super.onDestroy();
                 Intent intent = new Intent(MainActivity.this, AssetAudit.class);
                 startActivity(intent);
+                break;
+            case R.id.button_asset_move:
+                startFlag = false;
+                runFlag = false;
+                if (manager != null) {
+                    manager.close();
+                    manager = null;
+                }
+                unregisterReceiver(keyReceiver);
+                super.onDestroy();
+                Intent intentMove = new Intent(MainActivity.this, AssetMove.class);
+                startActivity(intentMove);
                 break;
             case R.id.set_freq:
                 SharedPreferences shared = getSharedPreferences("settings", 0);
