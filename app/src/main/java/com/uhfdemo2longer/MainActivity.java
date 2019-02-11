@@ -12,6 +12,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -241,9 +243,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                     case KeyEvent.KEYCODE_F5:
                         showtoast("f5");
                         break;
-                    case KeyEvent.KEYCODE_F4:
-                        showtoast("f4");
-                        break;
                 }
             } else {
                 switch (keyCode) {
@@ -300,28 +299,40 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 createExcelSheet();
                 break;
             case R.id.button_asset_audit:
-                startFlag = false;
-                runFlag = false;
-                if (manager != null) {
-                    manager.close();
-                    manager = null;
+                ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+                    startFlag = false;
+                    runFlag = false;
+                    if (manager != null) {
+                        manager.close();
+                        manager = null;
+                    }
+                    unregisterReceiver(keyReceiver);
+                    super.onDestroy();
+                    Intent intent = new Intent(MainActivity.this, AssetAudit.class);
+                    startActivity(intent);
+                }else{
+                    showtoast("Your`re Not Connected With Internet");
                 }
-                unregisterReceiver(keyReceiver);
-                super.onDestroy();
-                Intent intent = new Intent(MainActivity.this, AssetAudit.class);
-                startActivity(intent);
                 break;
             case R.id.button_asset_move:
-                startFlag = false;
-                runFlag = false;
-                if (manager != null) {
-                    manager.close();
-                    manager = null;
+                ConnectivityManager cm1 = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo1 = cm1.getActiveNetworkInfo();
+                if (netInfo1 != null && netInfo1.isConnectedOrConnecting()) {
+                    startFlag = false;
+                    runFlag = false;
+                    if (manager != null) {
+                        manager.close();
+                        manager = null;
+                    }
+                    unregisterReceiver(keyReceiver);
+                    super.onDestroy();
+                    Intent intentMove = new Intent(MainActivity.this, AssetMove.class);
+                    startActivity(intentMove);
+                }else{
+                    showtoast("Your`re Not Connected With Internet");
                 }
-                unregisterReceiver(keyReceiver);
-                super.onDestroy();
-                Intent intentMove = new Intent(MainActivity.this, AssetMove.class);
-                startActivity(intentMove);
                 break;
             case R.id.set_freq:
                 SharedPreferences shared = getSharedPreferences("settings", 0);
